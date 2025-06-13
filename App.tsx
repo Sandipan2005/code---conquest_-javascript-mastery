@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { jsMasteryCurriculum, GAME_TITLE } from './constants'; // Use jsMasteryCurriculum
 import { Challenge, GameState, PlayerProgress, FeedbackType, FeedbackMessage, Concept, SubTopic, MainTopic, Curriculum, SolutionCriteriaResult } from './types';
@@ -245,7 +243,7 @@ const App: React.FC = () => {
         const isCompleted = prev.playerProgress.completedConcepts.has(challengeToLoad.id);
         const savedCode = isCompleted ? prev.playerProgress.lastSubmittedCode.get(challengeToLoad.id) : undefined;
         const savedEvalValue = isCompleted ? prev.playerProgress.lastSuccessfulEvaluationValue.get(challengeToLoad.id) : undefined;
-  
+
         if (prev.challengeJustCompleted && prev.currentChallengeId === challengeToLoad.id) {
           return {
             ...prev,
@@ -254,26 +252,31 @@ const App: React.FC = () => {
             activeMainTopicId: parentMainTopic?.id || prev.activeMainTopicId,
           };
         }
-  
-        return {
-          ...prev,
-          playerCode: savedCode ?? challengeToLoad.starterCode,
-          consoleOutput: [], 
-          feedbackMessages: [{
-            id: 'init-' + challengeToLoad.id + Date.now(),
-            text: `Challenge: ${challengeToLoad.title}. ${isCompleted ? "(Status: Mastered)" : (challengeToLoad.isPlaceholder ? "(Content Coming Soon)" : challengeToLoad.description)}`,
-            type: FeedbackType.INFO
-          }],
-          isLoading: false,
-          activeSubTopicId: parentSubTopic?.id || prev.activeSubTopicId,
-          activeMainTopicId: parentMainTopic?.id || prev.activeMainTopicId,
-          lastEvaluationPassed: isCompleted ? true : null,
-          lastEvaluationMessage: isCompleted ? `This trial, "${challengeToLoad.title}", has been mastered.` : null,
-          codeForVisuals: isCompleted ? savedCode : null, 
-          lastEvaluationValue: isCompleted ? savedEvalValue : null,
-          showAnalysisButton: isCompleted ? false : prev.showAnalysisButton, 
-          isGeneratingAnalysis: false, 
-        };
+
+        // Show loading for at least 500ms before showing the next challenge
+        setTimeout(() => {
+          setGameState(innerPrev => ({
+            ...innerPrev,
+            playerCode: savedCode ?? challengeToLoad.starterCode,
+            consoleOutput: [], 
+            feedbackMessages: [{
+              id: 'init-' + challengeToLoad.id + Date.now(),
+              text: `Challenge: ${challengeToLoad.title}. ${isCompleted ? "(Status: Mastered)" : challengeToLoad.description}`,
+              type: FeedbackType.INFO
+            }],
+            isLoading: false,
+            activeSubTopicId: parentSubTopic?.id || innerPrev.activeSubTopicId,
+            activeMainTopicId: parentMainTopic?.id || innerPrev.activeMainTopicId,
+            lastEvaluationPassed: isCompleted ? true : null,
+            lastEvaluationMessage: isCompleted ? `This trial, "${challengeToLoad.title}", has been mastered.` : null,
+            codeForVisuals: isCompleted ? savedCode : null, 
+            lastEvaluationValue: isCompleted ? savedEvalValue : null,
+            showAnalysisButton: isCompleted ? false : innerPrev.showAnalysisButton, 
+            isGeneratingAnalysis: false, 
+          }));
+        }, 500);
+        // Keep loading state true until timeout fires
+        return { ...prev, isLoading: true };
       });
     } else if (gameState.currentChallengeId && curriculumRef.current.mainTopics.length > 0) {
       const firstPlayableMt = curriculumRef.current.mainTopics.find(mt => mt.id !== 'mt_intro_js' && gameState.playerProgress.unlockedMainTopics.has(mt.id));
@@ -531,7 +534,7 @@ const App: React.FC = () => {
 
 
   if (gameState.isLoading && gameState.currentChallengeId) {
-    return <div className="flex items-center justify-center h-screen bg-gray-900 text-white text-2xl p-8 text-center" style={{fontFamily: "'VT323', monospace"}}>Deciphering ancient scrolls and loading thy next challenge...</div>;
+    return <div className="flex items-center justify-center h-screen bg-gray-900 text-white text-2xl p-8 text-center" style={{fontFamily: "'VT323', monospace"}}>Loading your next challenge...</div>;
   }
   
   if (!currentChallenge && !gameState.isLoading) {

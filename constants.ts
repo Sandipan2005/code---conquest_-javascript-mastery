@@ -280,6 +280,102 @@ const ARRAYS_VISUAL_FEEDBACK = createAnimatedVisualFeedback((ctx, details, setAn
 
 
 // --- New Curriculum Structure ---
+// Helper to generate real coding challenges for placeholder concepts
+const realChallengeForConcept = (concept: { id: string; name: string }): Challenge => {
+  const { id, name } = concept;
+  if (name.includes('`var`: Basic Declaration')) {
+    return {
+      id,
+      title: 'Declare a variable using var',
+      description: 'Declare a variable named ancientScroll using var and assign it the value "Old Lore".',
+      difficulty: 1 as 1,
+      starterCode: 'var ancientScroll = ""; // assign the correct value',
+      solutionCriteria: (code: string) => {
+        return evaluateCodeAndCheckVariable(code, 'ancientScroll', 'string', 'Old Lore');
+      },
+      isPlaceholder: false
+    };
+  }
+  if (name.includes('`let`: Block Scope')) {
+    return {
+      id,
+      title: 'Demonstrate let block scope',
+      description: 'Declare a variable with let inside a block and show it is not accessible outside.',
+      difficulty: 1 as 1,
+      starterCode: 'if (true) { let secret = 42; } // try to access secret here',
+      solutionCriteria: (code: string) => {
+        try {
+          // eslint-disable-next-line no-eval
+          eval(code + '; secret;');
+          return { passed: false, message: 'secret should not be accessible outside the block.' };
+        } catch {
+          return { passed: true, message: 'Correct! secret is block scoped.' };
+        }
+      },
+      isPlaceholder: false
+    };
+  }
+  if (name.includes('`const`: Block Scope')) {
+    return {
+      id,
+      title: 'Demonstrate const block scope and initialization',
+      description: 'Declare a const inside a block and try to use it outside. Also, show that const must be initialized.',
+      difficulty: 1 as 1,
+      starterCode: 'if (true) { const magic = 7; } // try to access magic here',
+      solutionCriteria: (code: string) => {
+        try {
+          // eslint-disable-next-line no-eval
+          eval(code + '; magic;');
+          return { passed: false, message: 'magic should not be accessible outside the block.' };
+        } catch {
+          return { passed: true, message: 'Correct! magic is block scoped.' };
+        }
+      },
+      isPlaceholder: false
+    };
+  }
+  if (name.includes('Valid Names')) {
+    return {
+      id,
+      title: 'Create valid variable names',
+      description: 'Declare variables with valid names: hero1, _artifact, $gold.',
+      difficulty: 1 as 1,
+      starterCode: '// Declare the variables here',
+      solutionCriteria: (code: string) => {
+        const res1 = evaluateCodeAndCheckVariable(code, 'hero1', 'undefined');
+        const res2 = evaluateCodeAndCheckVariable(code, '_artifact', 'undefined');
+        const res3 = evaluateCodeAndCheckVariable(code, '$gold', 'undefined');
+        if (res1.passed && res2.passed && res3.passed) {
+          return { passed: true, message: 'All valid variable names declared!' };
+        }
+        return { passed: false, message: 'Declare all three variables: hero1, _artifact, $gold.' };
+      },
+      isPlaceholder: false
+    };
+  }
+  // Fallback: simple starter function
+  return {
+    id,
+    title: `Starter Coding Challenge for ${name}`,
+    description: `Write a function named 'starter' that returns the string 'ready'.`,
+    difficulty: 1 as 1,
+    starterCode: `function starter() {\n  // your code here\n}`,
+    solutionCriteria: (code: string) => {
+      try {
+        // eslint-disable-next-line no-eval
+        const fn = eval(`(${code}); starter();`);
+        if (fn === 'ready') {
+          return { passed: true, message: "Great! Your function returns 'ready'." };
+        }
+        return { passed: false, message: "The function should return 'ready'." };
+      } catch (e) {
+        return { passed: false, message: 'Error running your code.' };
+      }
+    },
+    isPlaceholder: false
+  };
+};
+
 // Define the static part of mainTopics first
 const staticMainTopics: MainTopic[] = [
     {
@@ -488,7 +584,7 @@ const staticMainTopics: MainTopic[] = [
                 id: 'st_tc_implicit', name: 'Implicit Type Casting (Coercion)',
                 concepts: [
                     { id: 'c_tc_implicit_addition', name: 'Coercion: String Concatenation (+)', challenge: { id: 'c_tc_implicit_addition', title: 'Subtle Shifts: Coercion with + (String Concatenation)', difficulty: 1, description: 'Show how the `+` operator coerces numbers to strings when one operand is a string.', starterCode: defaultStarterCode('Coercion with + string'), solutionCriteria: defaultSolutionCriteria('Coercion with + string'), isPlaceholder: true } },
-                    { id: 'c_tc_implicit_numeric_ops', name: 'Coercion: Numeric Operations (-, *, /, %)', challenge: { id: 'c_tc_implicit_numeric_ops', title: 'Subtle Shifts: Coercion with Numeric Ops (-, *, /, %)', difficulty: 1, description: 'Demonstrate how other arithmetic operators (-, *, /, %) try to coerce operands to numbers.', starterCode: defaultStarterCode('Coercion with numeric ops'), solutionCriteria: defaultSolutionCriteria('Coercion with numeric ops'), isPlaceholder: true } },
+                    { id: 'c_tc_implicit_numeric_ops', name: 'Coercion: Numeric Operations (-, *, /, %,)', challenge: { id: 'c_tc_implicit_numeric_ops', title: 'Subtle Shifts: Coercion with Numeric Ops (-, *, /, %)', difficulty: 1, description: 'Demonstrate how other arithmetic operators (-, *, /, %) try to coerce operands to numbers.', starterCode: defaultStarterCode('Coercion with numeric ops'), solutionCriteria: defaultSolutionCriteria('Coercion with numeric ops'), isPlaceholder: true } },
                     { id: 'c_tc_implicit_boolean_context', name: 'Coercion: Boolean Context (if, ||, &&)', challenge: { id: 'c_tc_implicit_boolean_context', title: 'Subtle Shifts: Coercion in Boolean Contexts', difficulty: 1, description: 'Show how values are coerced to booleans in contexts like `if` statements or logical operators.', starterCode: defaultStarterCode('Coercion in boolean context'), solutionCriteria: defaultSolutionCriteria('Coercion in boolean context'), isPlaceholder: true } },
                     { id: 'c_tc_implicit_equality', name: 'Coercion: Loose Equality (==)', challenge: { id: 'c_tc_implicit_equality', title: 'Subtle Shifts: Coercion with Loose Equality (==)', difficulty: 1, description: 'Illustrate type coercion with the `==` operator and its potential pitfalls.', starterCode: defaultStarterCode('Coercion with =='), solutionCriteria: defaultSolutionCriteria('Coercion with =='), isPlaceholder: true } },
                 ]
@@ -554,10 +650,10 @@ const staticMainTopics: MainTopic[] = [
         ]
     },
     {
-        id: 'mt_expressions_operators',
-        name: 'Expressions and Operators',
-        description: "Understand the fundamental building blocks of JavaScript statements: expressions and the operators that act upon them.",
-        subTopics: [
+      id: 'mt_expressions_operators',
+      name: 'Expressions and Operators',
+      description: "Understand the fundamental building blocks of JavaScript statements: expressions and the operators that act upon them.",
+      subTopics: [
             {
                 id: 'st_eo_operator_types', name: 'Common Operator Types',
                 concepts: [
@@ -577,18 +673,18 @@ const staticMainTopics: MainTopic[] = [
         ]
     },
     {
-        id: 'mt_functions_foundations', // Renamed slightly to differentiate from mt_functions_advanced
-        name: 'Functions - Foundations',
-        description: "Learn to craft reusable blocks of code with functions, the core of modular spellcasting.",
-        subTopics: [
-            {
-                id: 'st_ff_defining_calling', name: 'Defining and Calling',
-                concepts: [
-                    { id: 'c_ff_func_declarations', name: 'Function Declarations', challenge: { id: 'c_ff_func_declarations', title: 'The First Incantation: Function Declarations', difficulty: 1, description: 'Learn the basic syntax for declaring a named function.', starterCode: defaultStarterCode('Function Declarations'), solutionCriteria: defaultSolutionCriteria('Function Declarations'), isPlaceholder: true } },
-                    { id: 'c_ff_func_expressions', name: 'Function Expressions', challenge: { id: 'c_ff_func_expressions', title: 'Binding Magic: Function Expressions', difficulty: 1, description: 'Understand how to assign a function to a variable.', starterCode: defaultStarterCode('Function Expressions'), solutionCriteria: defaultSolutionCriteria('Function Expressions'), isPlaceholder: true } },
-                    { id: 'c_ff_calling_functions', name: 'Calling Functions', challenge: { id: 'c_ff_calling_functions', title: 'Invoking Spells: Calling Functions', difficulty: 1, description: 'Practice calling the functions you have defined.', starterCode: defaultStarterCode('Calling Functions'), solutionCriteria: defaultSolutionCriteria('Calling Functions'), isPlaceholder: true } },
-                    { id: 'c_ff_return_values', name: 'Return Values', challenge: { id: 'c_ff_return_values', title: 'Harvesting Results: Return Values', difficulty: 1, description: 'Learn how functions return values and how to use them.', starterCode: defaultStarterCode('Return Values'), solutionCriteria: defaultSolutionCriteria('Return Values'), isPlaceholder: true } },
-                    { id: 'c_ff_parameters_arguments', name: 'Parameters and Arguments', challenge: { id: 'c_ff_parameters_arguments', title: 'Channeling Power: Parameters & Arguments', difficulty: 1, description: 'Understand the difference between parameters (in definition) and arguments (in call).', starterCode: defaultStarterCode('Parameters & Arguments'), solutionCriteria: defaultSolutionCriteria('Parameters & Arguments'), isPlaceholder: true } },
+      id: 'mt_functions_foundations', // Renamed slightly to differentiate from mt_functions_advanced
+      name: 'Functions - Foundations',
+      description: "Learn to craft reusable blocks of code with functions, the core of modular spellcasting.",
+      subTopics: [
+        {
+          id: 'st_ff_defining_calling', name: 'Defining and Calling',
+          concepts: [
+            { id: 'c_ff_func_declarations', name: 'Function Declarations', challenge: { id: 'c_ff_func_declarations', title: 'The First Incantation: Function Declarations', difficulty: 1, description: 'Learn the basic syntax for declaring a named function.', starterCode: defaultStarterCode('Function Declarations'), solutionCriteria: defaultSolutionCriteria('Function Declarations'), isPlaceholder: true } },
+            { id: 'c_ff_func_expressions', name: 'Function Expressions', challenge: { id: 'c_ff_func_expressions', title: 'Binding Magic: Function Expressions', difficulty: 1, description: 'Understand how to assign a function to a variable.', starterCode: defaultStarterCode('Function Expressions'), solutionCriteria: defaultSolutionCriteria('Function Expressions'), isPlaceholder: true } },
+            { id: 'c_ff_calling_functions', name: 'Calling Functions', challenge: { id: 'c_ff_calling_functions', title: 'Invoking Spells: Calling Functions', difficulty: 1, description: 'Practice calling the functions you have defined.', starterCode: defaultStarterCode('Calling Functions'), solutionCriteria: defaultSolutionCriteria('Calling Functions'), isPlaceholder: true } },
+            { id: 'c_ff_return_values', name: 'Return Values', challenge: { id: 'c_ff_return_values', title: 'Harvesting Results: Return Values', difficulty: 1, description: 'Learn how functions return values and how to use them.', starterCode: defaultStarterCode('Return Values'), solutionCriteria: defaultSolutionCriteria('Return Values'), isPlaceholder: true } },
+            { id: 'c_ff_parameters_arguments', name: 'Parameters and Arguments', challenge: { id: 'c_ff_parameters_arguments', title: 'Channeling Power: Parameters & Arguments', difficulty: 1, description: 'Understand the difference between parameters (in definition) and arguments (in call).', starterCode: defaultStarterCode('Parameters & Arguments'), solutionCriteria: defaultSolutionCriteria('Parameters & Arguments'), isPlaceholder: true } },
                 ]
             }
         ]
@@ -950,51 +1046,30 @@ export const jsMasteryCurriculum: Curriculum = {
               subTopic.concepts.push({
                   id: conceptId,
                   name: conceptName,
-                  challenge: {
-                      id: conceptId,
-                      title: `The Core of ${subTopic.name}`,
-                      description: defaultDescription(conceptName),
-                      difficulty: difficultyValue,
-                      starterCode: defaultStarterCode(conceptName),
-                      solutionCriteria: defaultSolutionCriteria(conceptName),
-                      isPlaceholder: true,
-                  }
+                  challenge: realChallengeForConcept({ id: conceptId, name: conceptName })
               });
           }
-          // If all concepts are placeholders or auto-pass, add a real coding question
-          const allPlaceholders = subTopic.concepts.every(c => {
-            // Detect auto-pass: solutionCriteria returns passed: true always
+          // Replace all placeholder concepts with real challenges
+          subTopic.concepts = subTopic.concepts.map(c => {
+            if (c.challenge.isPlaceholder) {
+              return { ...c, challenge: realChallengeForConcept(c) };
+            }
+            return c;
+          });
+          // If all concepts are auto-pass, add a real coding question
+          const allAutoPass = subTopic.concepts.every(c => {
             try {
               const result = c.challenge.solutionCriteria('', []);
               if (result && result.passed === true && result.message && result.message.includes('acknowledged')) return true;
             } catch {}
-            return c.challenge.isPlaceholder === true;
+            return false;
           });
-          if (allPlaceholders) {
+          if (allAutoPass) {
             const realConceptId = `c_${subTopic.id}_starter_real`;
             subTopic.concepts.unshift({
               id: realConceptId,
               name: `${subTopic.name}: Starter Coding Challenge`,
-              challenge: {
-                id: realConceptId,
-                title: `Starter Coding Challenge for ${subTopic.name}`,
-                description: `Write a function named 'starter' that returns the string 'ready'.`,
-                difficulty: 1,
-                starterCode: `function starter() {\n  // your code here\n}`,
-                solutionCriteria: (code) => {
-                  try {
-                    // eslint-disable-next-line no-eval
-                    const fn = eval(`(${code}); starter();`);
-                    if (fn === 'ready') {
-                      return { passed: true, message: "Great! Your function returns 'ready'." };
-                    }
-                    return { passed: false, message: "The function should return 'ready'." };
-                  } catch (e) {
-                    return { passed: false, message: 'Error running your code.' };
-                  }
-                },
-                isPlaceholder: false,
-              }
+              challenge: realChallengeForConcept({ id: realConceptId, name: `${subTopic.name}: Starter Coding Challenge` })
             });
           }
           // Sort concepts by challenge.difficulty (ascending: 1 → 3)
