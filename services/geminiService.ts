@@ -1,13 +1,10 @@
+import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 
-import { GoogleGenerativeAI as GoogleGenAI, GenerateContentResponse } from "@google/genai";
+// Use Vite's import.meta.env for environment variables in the browser
 
-// Ensure API_KEY is available in the environment.
-// In local development, this is typically loaded from a `.env` file in the project root
-// (e.g., API_KEY="YOUR_ACTUAL_API_KEY_HERE").
-// In production/hosted environments, this variable needs to be set in the environment settings.
-const KEY_FROM_ENV = process.env.API_KEY;
-// Treat API_KEY as null if it's undefined, null, empty, or whitespace-only
-const API_KEY = (KEY_FROM_ENV && KEY_FROM_ENV.trim() !== "") ? KEY_FROM_ENV.trim() : null;
+const API_KEY = (import.meta.env.VITE_API_KEY && import.meta.env.VITE_API_KEY.trim() !== "")
+  ? import.meta.env.VITE_API_KEY.trim()
+  : null;
 
 let ai: GoogleGenAI | null = null;
 let initializationError: string | null = null;
@@ -21,7 +18,7 @@ if (API_KEY) {
     ai = null; // Ensure ai is null if constructor fails
   }
 } else {
-  initializationError = "Gemini API key not found, is empty, or consists only of whitespace in process.env.API_KEY.";
+  initializationError = `Gemini API key not found, is empty, or consists only of whitespace in import.meta.env.VITE_API_KEY.`;
   console.warn(initializationError);
 }
 
@@ -173,3 +170,5 @@ Provide your insightful analysis:`;
     return null;
   }
 };
+
+// (Moved ImportMeta declaration to a .d.ts file for proper augmentation. See env.d.ts.)
