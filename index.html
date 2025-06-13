@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Code & Conquest: JavaScript Mastery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=MedievalSharp&family=Metamorphous&family=VT323&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      margin: 0; 
+      font-family: 'VT323', monospace; /* Game-like mono font */
+      background-color: #1a202c; 
+      color: #e2e8f0; 
+      letter-spacing: 0.05em;
+    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #2d3748; }
+    ::-webkit-scrollbar-thumb { background: #4a5568; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #718096; }
+    .code-editor-bg { background-color: #282c34; }
+    .console-bg { background-color: #1e1e1e; }
+    .panel-bg { background-color: #2d3748; }
+    .accent-color { color: #f6ad55; }
+    .accent-bg { background-color: #f6ad55; }
+    .button-primary {
+      background-color: #dd6b20;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: bold;
+      transition: background-color 0.2s;
+      font-family: 'MedievalSharp', cursive;
+      letter-spacing: 0.05em;
+    }
+    .button-primary:hover {
+      background-color: #c05621;
+    }
+    .button-secondary {
+      background-color: #4a5568;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: bold;
+      transition: background-color 0.2s;
+      font-family: 'MedievalSharp', cursive;
+    }
+    .button-secondary:hover {
+      background-color: #718096;
+    }
+    .nav-item-active {
+      background-color: #4a5568;
+      color: #f6ad55;
+    }
+     .nav-item-completed {
+      color: #68d391; /* Green for completed */
+    }
+    .nav-item-completed::before {
+      content: '✔ ';
+      color: #68d391;
+    }
+    /* Styles for canvas text if not set directly in JS */
+    .canvas-text-title {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 24px; /* Example size */
+      fill: #f6ad55; /* accent-color */
+    }
+    .canvas-text-body {
+      font-family: 'VT323', monospace;
+      font-size: 16px; /* Example size */
+      fill: #e2e8f0; /* default text color */
+    }
+    .canvas-text-instruction {
+      font-family: 'MedievalSharp', cursive;
+      font-size: 18px; /* Example size */
+      fill: #a0aec0; /* gray for instructions */
+    }
+  </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "@google/genai": "https://esm.sh/@google/generative-ai"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
