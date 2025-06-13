@@ -1,5 +1,3 @@
-
-
 import { Curriculum, Challenge, SolutionCriteriaResult, MainTopic } from './types';
 
 export const GAME_TITLE = "Code & Conquest";
@@ -187,9 +185,11 @@ const ARRAYS_VISUAL_FEEDBACK = createAnimatedVisualFeedback((ctx, details, setAn
       if (t < 1) {
         setAnimFrameId(requestAnimationFrame(step));
       } else {
-        targetChest.open = true;
-        targetChest.collected = true; // Mark as collected for visual
-        rogueMessage = `Rogue: Got the ${targetChest.id}!`;
+        if (targetChest) {
+          targetChest.open = true;
+          targetChest.collected = true; // Mark as collected for visual
+          rogueMessage = `Rogue: Got the ${targetChest.id}!`;
+        }
         redrawSceneBase();
         setAnimFrameId(null);
         onComplete();
@@ -296,7 +296,7 @@ const staticMainTopics: MainTopic[] = [
                 title: 'The Scribe\'s First Scroll: What is JavaScript?', 
                 description: defaultDescription('JavaScript\'s role and purpose'), 
                 difficulty: 1, 
-                starterCode: `// JavaScript: The Lingua Franca of the Web\n\n// JavaScript (JS) is a versatile, high-level programming language.\n// Originally created to make web pages interactive, it now runs everywhere:\n// - In web browsers (Chrome, Firefox, Safari, Edge)\n// - On servers (Node.js)\n// - In mobile apps, desktop apps, and even games!\n\n// Key Characteristics:\n// 1. Client-Side Scripting: Primarily used to manipulate web page content\n//    dynamically in the user's browser.\n// 2. Multi-Paradigm: Supports event-driven, functional, and imperative\n//    (including object-oriented and prototype-based) programming styles.\n// 3. Interpreted/JIT Compiled: Code is often executed line by line, or\n//    compiled "just-in-time" for performance.\n// 4. Dynamically Typed: Variable types are checked during execution, not at compile time.\n\n// In \"Code & Conquest\", JavaScript is the magic you'll use to cast spells!\n// This scroll marks your first step. It is known.`, 
+                starterCode: `// JavaScript: The Lingua Franca of the Web\n\n// JavaScript (JS) is a versatile, high-level programming language.\n// Originally created to make web pages interactive, it now runs everywhere:\n// - In web browsers (Chrome, Firefox, Safari, Edge)\n// - On servers (Node.js)\n// - In mobile apps, desktop apps, and even games!\n\n// Key Characteristics:\n// 1. Client-Side Scripting: Primarily used to manipulate web page content\n//    dynamically in the user's browser.\n// 2. Multi-Paradigm: Supports event-driven, functional, and imperative\n//    (including object-oriented and prototype-based) programming styles.\n// 3. Interpreted/JIT Compiled: Code is often executed line by line, or\n//    compiled "just-in-time" for performance.\n// 4. Dynamically Typed: Variable types are checked during execution, not at compile time.\n\n// In "Code & Conquest", JavaScript is the magic you'll use to cast spells!\n// This scroll marks your first step. It is known.`, 
                 solutionCriteria: () => ({ passed: true, message: "This foundational knowledge is acknowledged."}) // Auto-pass
               } 
             },
@@ -338,7 +338,7 @@ const staticMainTopics: MainTopic[] = [
                 title: 'Whispers in the Console: Running JS in Browsers', 
                 description: defaultDescription('how JavaScript runs in web browsers'), 
                 difficulty: 1, 
-                starterCode: `// How JavaScript Spells are Cast (Executed):\n\n// 1. In Web Browsers (The Most Common Realm):\n//    - JavaScript code is embedded in HTML files using <script> tags.\n//      \`<script>alert('Hello, Sorcerer!');</script>\`\n//    - Or linked externally:\n//      \`<script src="my_spells.js"></script>\`\n//    - Browsers have built-in JavaScript engines (e.g., V8 in Chrome, SpiderMonkey in Firefox)\n//      that interpret and execute the code.\n//    - You can also type JavaScript directly into the browser's Developer Console.\n//      (Try pressing F12 or right-click -> Inspect -> Console)\n\n// 2. On Servers (e.g., Node.js - The Realm of Backend Magic):\n//    - Node.js allows you to run JavaScript outside of a browser.\n//    - Used for building web servers, command-line tools, and more.\n//    - Example (in a file named \`server_spell.js\` run with \`node server_spell.js\`):\n//      \`console.log('The server awakens!');\`\n\n// 3. Other Environments:\n//    - Mobile apps (React Native, NativeScript)\n//    - Desktop apps (Electron)\n//    - Game development (various engines)\n\n// In \"Code & Conquest\", your spells are primarily cast within a simulated browser environment.`, 
+                starterCode: `// How JavaScript Spells are Cast (Executed):\n\n// 1. In Web Browsers (The Most Common Realm):\n//    - JavaScript code is embedded in HTML files using <script> tags.\n//      \`<script>alert('Hello, Sorcerer!');</script>\`\n//    - Or linked externally:\n//      \`<script src="my_spells.js"></script>\`\n//    - Browsers have built-in JavaScript engines (e.g., V8 in Chrome, SpiderMonkey in Firefox)\n//      that interpret and execute the code.\n//    - You can also type JavaScript directly into the browser's Developer Console.\n//      (Try pressing F12 or right-click -> Inspect -> Console)\n\n// 2. On Servers (e.g., Node.js - The Realm of Backend Magic):\n//    - Node.js allows you to run JavaScript outside of a browser.\n//    - Used for building web servers, command-line tools, and more.\n//    - Example (in a file named \`server_spell.js\` run with \`node server_spell.js\`):\n//      \`console.log('The server awakens!');\`\n\n// 3. Other Environments:\n//    - Mobile apps (React Native, NativeScript)\n//    - Desktop apps (Electron)\n//    - Game development (various engines)\n\n// In "Code & Conquest", your spells are primarily cast within a simulated browser environment.`, 
                 solutionCriteria: () => ({ passed: true, message: "This execution knowledge is acknowledged."}) // Auto-pass
               } 
             } 
@@ -937,6 +937,7 @@ export const jsMasteryCurriculum: Curriculum = {
   name: 'JavaScript Mastery Path',
   mainTopics: staticMainTopics.map(mainTopic => {
       mainTopic.subTopics.forEach(subTopic => {
+          // If subTopic has no concepts, add a default one (already handled below)
           if (subTopic.concepts.length === 0) {
               const conceptId = `c_${subTopic.id}_fundamentals`;
               const conceptName = `${subTopic.name}: Fundamentals`;
@@ -946,7 +947,6 @@ export const jsMasteryCurriculum: Curriculum = {
               } else if (mainTopic.name.toLowerCase().includes('advanced') || mainTopic.id.includes('_memory_') || mainTopic.id.includes('_classes_adv')) {
                  difficultyValue = 3; 
               }
-
               subTopic.concepts.push({
                   id: conceptId,
                   name: conceptName,
@@ -961,6 +961,44 @@ export const jsMasteryCurriculum: Curriculum = {
                   }
               });
           }
+          // If all concepts are placeholders or auto-pass, add a real coding question
+          const allPlaceholders = subTopic.concepts.every(c => {
+            // Detect auto-pass: solutionCriteria returns passed: true always
+            try {
+              const result = c.challenge.solutionCriteria('', []);
+              if (result && result.passed === true && result.message && result.message.includes('acknowledged')) return true;
+            } catch {}
+            return c.challenge.isPlaceholder === true;
+          });
+          if (allPlaceholders) {
+            const realConceptId = `c_${subTopic.id}_starter_real`;
+            subTopic.concepts.unshift({
+              id: realConceptId,
+              name: `${subTopic.name}: Starter Coding Challenge`,
+              challenge: {
+                id: realConceptId,
+                title: `Starter Coding Challenge for ${subTopic.name}`,
+                description: `Write a function named 'starter' that returns the string 'ready'.`,
+                difficulty: 1,
+                starterCode: `function starter() {\n  // your code here\n}`,
+                solutionCriteria: (code) => {
+                  try {
+                    // eslint-disable-next-line no-eval
+                    const fn = eval(`(${code}); starter();`);
+                    if (fn === 'ready') {
+                      return { passed: true, message: "Great! Your function returns 'ready'." };
+                    }
+                    return { passed: false, message: "The function should return 'ready'." };
+                  } catch (e) {
+                    return { passed: false, message: 'Error running your code.' };
+                  }
+                },
+                isPlaceholder: false,
+              }
+            });
+          }
+          // Sort concepts by challenge.difficulty (ascending: 1 → 3)
+          subTopic.concepts.sort((a, b) => a.challenge.difficulty - b.challenge.difficulty);
       });
       return mainTopic;
   }),
